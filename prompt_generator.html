@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Prompts para Imagens</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .prompt-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f7931a;
+        }
+        .prompt-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .button {
+            background: #f7931a;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background: #e8840a;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(247, 147, 26, 0.3);
+        }
+        .button.secondary {
+            background: #6c757d;
+        }
+        .button.secondary:hover {
+            background: #5a6268;
+        }
+        .tools-section {
+            background: #e8f5e8;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .tool-link {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .tool-link:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom: 3px solid #f7931a;
+            color: #f7931a;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .copy-feedback {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Gerador de Prompts para Thumbnail Satsman</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('prompt-otimizado')">Prompt Otimizado</button>
+            <button class="tab" onclick="showTab('prompt-detalhado')">Prompt Detalhado</button>
+            <button class="tab" onclick="showTab('ferramentas')">Ferramentas</button>
+        </div>
+
+        <div id="prompt-otimizado" class="tab-content active">
+            <div class="prompt-section">
+                <h3>🚀 Prompt Otimizado para DALL-E 3 / Midjourney</h3>
+                <div class="prompt-text" id="optimized-prompt">
+Professional YouTube thumbnail 16:9, cinematic bitcoin theme. Dark background (#111111) with floating golden particles and subtle blockchain grid. Giant glowing Bitcoin symbol (₿) in orange (#f7931a) on left with light rays. Center text: "SATSMAN" in white bold, "GANHEI SATS!" in orange (#f7931a) below. Green badge showing "10.000 SATS ≈ $8" with up arrow icon. Right side: calendar showing "15 DIAS" with green checkmarks. Top right: yellow "BOUNTY BITCOIN" label in black bold. Bottom right: small orange "@CanalQb" logo. High contrast, dramatic lighting, orange gold neon glow, achievement unlock aesthetic, professional design, no watermarks, no white borders.
+
+--no white background, clean layout, pastel colors, amateur design, generic watermarks, dominant dark green
+                </div>
+                <button class="button" onclick="copyPrompt('optimized-prompt')">📋 Copiar Prompt</button>
+                <button class="button secondary" onclick="regeneratePrompt()">🔄 Gerar Variação</button>
+            </div>
+        </div>
+
+        <div id="prompt-detalhado" class="tab-content">
+            <div class="prompt-section">
+                <h3>📋 Prompt Completo com Negatives</h3>
+                <div class="prompt-text" id="detailed-prompt">
+**PROMPT PRINCIPAL:**
+Thumbnail profissional para YouTube no formato 16:9. Fundo escuro (#111111) com partículas douradas flutuando e grade de blockchain sutil. Lado esquerdo: símbolo do Bitcoin (₿) em laranja #f7931a gigante e brilhante, com raios de luz saindo dele. Centro: título em duas linhas bold ultra-impactante — 'SATSMAN' em branco e 'GANHEI SATS!' em laranja #f7931a. Abaixo: badge em verde escuro mostrando '10.000 SATS ≈ $8' com ícone de seta para cima. Lado direito: calendário ou contador visual mostrando '15 DIAS' com checkmarks verdes, representando a sequência obrigatória. Canto superior direito: etiqueta amarela com texto 'BOUNTY BITCOIN' em preto bold. Logotipo '@CanalQb' no canto inferior direito em laranja, pequeno e discreto. Alta energia visual, clima de descoberta e conquista. Sem fundo claro. Sem bordas brancas.
+
+**ESTILO:**
+bitcoin cinematic dark, crypto bounty aesthetic, orange gold neon glow, high contrast drama, professional YouTube thumbnail, achievement unlock vibe
+
+**ESPECIFICAÇÕES TÉCNICAS:**
+- Aspect Ratio: 16:9
+- Resolução: 1920x1080
+- Formato: PNG ou JPEG
+
+**NEGATIVE PROMPT:**
+branco, fundo claro, texto ilegível, baixo contraste, pixelado, amador, watermark genérico, cores pastéis, layout limpo demais, verde escuro dominante
+                </div>
+                <button class="button" onclick="copyPrompt('detailed-prompt')">📋 Copiar Prompt Completo</button>
+            </div>
+        </div>
+
+        <div id="ferramentas" class="tab-content">
+            <div class="tools-section">
+                <h3>🛠️ Ferramentas Recomendadas</h3>
+                <p>Use os prompts acima em qualquer uma destas ferramentas:</p>
+                
+                <a href="https://www.bing.com/images/create" target="_blank" class="tool-link">
+                    🎨 Microsoft Designer (DALL-E 3) - GRÁTIS
+                </a>
+                
+                <a href="https://aistudio.google.com/" target="_blank" class="tool-link">
+                    🤖 Google AI Studio (Imagen) - GRÁTIS
+                </a>
+                
+                <a href="https://www.midjourney.com/" target="_blank" class="tool-link">
+                    ⚡ Midjourney - Pago
+                </a>
+                
+                <a href="https://stability.ai/" target="_blank" class="tool-link">
+                    🌟 Stable Diffusion - GRÁTIS/Pago
+                </a>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
+                    <h4>💡 Dicas para Melhores Resultados:</h4>
+                    <ul>
+                        <li>Use o "Prompt Otimizado" para DALL-E 3 e Midjourney</li>
+                        <li>Configure sempre aspect ratio 16:9</li>
+                        <li>Se não gostar do resultado, clique em "Gerar Variação"</li>
+                        <li>Experimente diferentes ferramentas para estilos variados</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <div id="copy-feedback" class="copy-feedback">
+        ✅ Prompt copiado com sucesso!
+    </div>
+
+    <script>
+        const promptVariations = [
+            `Professional YouTube thumbnail 16:9, cinematic bitcoin theme. Dark background (#111111) with floating golden particles and subtle blockchain grid. Giant glowing Bitcoin symbol (₿) in orange (#f7931a) on left with light rays. Center text: "SATSMAN" in white bold, "GANHEI SATS!" in orange (#f7931a) below. Green badge showing "10.000 SATS ≈ $8" with up arrow icon. Right side: calendar showing "15 DIAS" with green checkmarks. Top right: yellow "BOUNTY BITCOIN" label in black bold. Bottom right: small orange "@CanalQb" logo. High contrast, dramatic lighting, orange gold neon glow, achievement unlock aesthetic, professional design, no watermarks, no white borders.
+
+--no white background, clean layout, pastel colors, amateur design, generic watermarks, dominant dark green`,
+            
+            `YouTube thumbnail 16:9, dramatic bitcoin bounty scene. Matte black background with golden blockchain particles floating. Massive illuminated Bitcoin (₿) symbol left side in vibrant orange (#f7931a) emitting light rays. Bold centered typography: "SATSMAN" white, "GANHEI SATS!" orange. Dark green achievement badge "10.000 SATS ≈ $8" with arrow. 15-day progress tracker with green checkmarks right side. Yellow banner top-right "BOUNTY BITCOIN". Small "@CanalQb" brand bottom-right. Cinematic lighting, high contrast, crypto gaming aesthetic, professional quality.
+
+--no bright colors, minimalist, soft lighting, cartoon style, watermark, text borders`,
+            
+            `Cinematic YouTube thumbnail 16:9, crypto gaming theme. Deep black (#111111) background with golden particle effects and blockchain grid. Huge radiant Bitcoin symbol (₿) in neon orange (#f7931a) left side with energy rays. Impact text center: "SATSMAN" bold white, "GANHEI SATS!" bright orange. Achievement badge "10.000 SATS ≈ $8" in dark green with up icon. Progress indicator "15 DIAS" with completed checkmarks. Golden "BOUNTY BITCOIN" label top-right. Subtle "@CanalQb" watermark bottom-right. Ultra high contrast, dramatic shadows, neon glow, gaming achievement style.
+
+--no pastel colors, daylight, soft focus, amateur graphics, visible borders, clean design`
+        ];
+
+        let currentPromptIndex = 0;
+
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        function copyPrompt(elementId) {
+            const promptText = document.getElementById(elementId).textContent;
+            
+            navigator.clipboard.writeText(promptText).then(() => {
+                showCopyFeedback();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = promptText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showCopyFeedback();
+            });
+        }
+
+        function showCopyFeedback() {
+            const feedback = document.getElementById('copy-feedback');
+            feedback.style.display = 'block';
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 2000);
+        }
+
+        function regeneratePrompt() {
+            currentPromptIndex = (currentPromptIndex + 1) % promptVariations.length;
+            document.getElementById('optimized-prompt').textContent = promptVariations[currentPromptIndex];
+            
+            showStatus('🔄 Prompt gerado com sucesso!', 'success');
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 3000);
+        }
+
+        // Auto-generate timestamp for filename suggestions
+        function generateFilename() {
+            const now = new Date();
+            const timestamp = now.toISOString().slice(0, 19).replace(/[:-]/g, '');
+            return `satsman_thumbnail_${timestamp}.png`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Gerador de prompts carregado com sucesso!');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Imagens com Puter.js (Autenticado)</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .auth-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border-left: 5px solid #007bff;
+        }
+        .button {
+            background: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+        .button.success {
+            background: #28a745;
+        }
+        .button.success:hover {
+            background: #218838;
+        }
+        .button.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        .button.warning:hover {
+            background: #e0a800;
+        }
+        .button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .user-info {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+        .prompt-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #f7931a;
+            display: none;
+        }
+        .prompt-text {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            border-bottom: 3px solid #f7931a;
+            color: #f7931a;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Gerador de Imagens com Puter.js</h1>
+        
+        <div id="auth-section" class="auth-section">
+            <h3>🔐 Autenticação Necessária</h3>
+            <p>Para usar o Puter.js, você precisa estar autenticado. Clique no botão abaixo para fazer login:</p>
+            <button id="sign-in-btn" class="button" onclick="signIn()">
+                🚀 Entrar com Puter
+            </button>
+            <button id="temp-user-btn" class="button warning" onclick="createTempUser()">
+                👤 Criar Usuário Temporário
+            </button>
+        </div>
+
+        <div id="user-info" class="user-info">
+            <h4>✅ Usuário Autenticado</h4>
+            <p id="user-details"></p>
+            <button class="button" onclick="signOut()">
+                🚪 Sair
+            </button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <div id="generator-section" style="display: none;">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('txt2img')">Gerar Imagem</button>
+                <button class="tab" onclick="showTab('prompt-optimizer')">Otimizar Prompt</button>
+                <button class="tab" onclick="showTab('models')">Modelos</button>
+            </div>
+
+            <div id="txt2img" class="tab-content active">
+                <div class="prompt-section">
+                    <h3>🖼️ Gerar Imagem com Puter.js</h3>
+                    
+                    <div style="margin: 15px 0;">
+                        <label for="prompt-input"><strong>Prompt:</strong></label>
+                        <textarea id="prompt-input" style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace;">Professional YouTube thumbnail 16:9, cinematic bitcoin theme. Dark background (#111111) with floating golden particles and subtle blockchain grid. Giant glowing Bitcoin symbol (₿) in orange (#f7931a) on left with light rays. Center text: "SATSMAN" in white bold, "GANHEI SATS!" in orange (#f7931a) below. Green badge showing "10.000 SATS ≈ $8" with up arrow icon. Right side: calendar showing "15 DIAS" with green checkmarks. Top right: yellow "BOUNTY BITCOIN" label in black bold. Bottom right: small orange "@CanalQb" logo. High contrast, dramatic lighting, orange gold neon glow, achievement unlock aesthetic, professional design, no watermarks, no white borders.</textarea>
+                    </div>
+
+                    <div style="margin: 15px 0;">
+                        <label for="model-select"><strong>Modelo:</strong></label>
+                        <select id="model-select" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="dall-e-3">DALL-E 3</option>
+                            <option value="dall-e-2">DALL-E 2</option>
+                            <option value="stable-diffusion">Stable Diffusion</option>
+                            <option value="midjourney">Midjourney</option>
+                        </select>
+                    </div>
+
+                    <button id="generate-btn" class="button success" onclick="generateImage()">
+                        🎨 Gerar Imagem
+                    </button>
+                    
+                    <div id="image-result" style="margin-top: 20px; text-align: center;"></div>
+                </div>
+            </div>
+
+            <div id="prompt-optimizer" class="tab-content">
+                <div class="prompt-section">
+                    <h3>🤖 Otimizar Prompt com IA</h3>
+                    <p>Use a IA do Puter para otimizar seu prompt para melhores resultados:</p>
+                    
+                    <div style="margin: 15px 0;">
+                        <label for="optimize-input"><strong>Seu Prompt:</strong></label>
+                        <textarea id="optimize-input" style="width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace;">Thumbnail profissional para YouTube no formato 16:9. Fundo escuro com Bitcoin e texto SATSMAN.</textarea>
+                    </div>
+
+                    <button id="optimize-btn" class="button" onclick="optimizePrompt()">
+                        ✨ Otimizar Prompt
+                    </button>
+                    
+                    <div id="optimized-result" style="margin-top: 20px;">
+                        <div class="prompt-text" id="optimized-prompt" style="display: none;"></div>
+                        <button id="copy-optimized-btn" class="button" style="display: none;" onclick="copyOptimizedPrompt()">
+                            📋 Copiar Prompt Otimizado
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="models" class="tab-content">
+                <div class="prompt-section">
+                    <h3>📋 Modelos Disponíveis</h3>
+                    <button class="button" onclick="listModels()">
+                        🔄 Carregar Modelos
+                    </button>
+                    <div id="models-list" style="margin-top: 20px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        // Verificar se já está autenticado ao carregar a página
+        window.addEventListener('load', async () => {
+            await checkAuthStatus();
+        });
+
+        async function checkAuthStatus() {
+            try {
+                if (puter.auth.isSignedIn()) {
+                    currentUser = await puter.auth.getUser();
+                    showUserInfo(currentUser);
+                    showGeneratorSection();
+                } else {
+                    showAuthSection();
+                }
+            } catch (error) {
+                console.error('Erro ao verificar status de autenticação:', error);
+                showStatus('Erro ao verificar autenticação', 'error');
+                showAuthSection();
+            }
+        }
+
+        async function signIn() {
+            const btn = document.getElementById('sign-in-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Entrando...';
+            
+            try {
+                showStatus('Abrindo janela de autenticação...', 'info');
+                
+                const result = await puter.auth.signIn();
+                currentUser = await puter.auth.getUser();
+                
+                showUserInfo(currentUser);
+                showGeneratorSection();
+                showStatus('Autenticado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro no login:', error);
+                showStatus('Erro ao fazer login: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Entrar com Puter';
+            }
+        }
+
+        async function createTempUser() {
+            const btn = document.getElementById('temp-user-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Criando...';
+            
+            try {
+                showStatus('Criando usuário temporário...', 'info');
+                
+                const result = await puter.auth.signIn({
+                    attempt_temp_user_creation: true
+                });
+                
+                currentUser = await puter.auth.getUser();
+                
+                showUserInfo(currentUser);
+                showGeneratorSection();
+                showStatus('Usuário temporário criado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao criar usuário temporário:', error);
+                showStatus('Erro ao criar usuário temporário: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '👤 Criar Usuário Temporário';
+            }
+        }
+
+        async function signOut() {
+            try {
+                await puter.auth.signOut();
+                currentUser = null;
+                showAuthSection();
+                hideGeneratorSection();
+                showStatus('Desconectado com sucesso', 'info');
+            } catch (error) {
+                console.error('Erro ao sair:', error);
+                showStatus('Erro ao sair: ' + error.message, 'error');
+            }
+        }
+
+        function showAuthSection() {
+            document.getElementById('auth-section').style.display = 'block';
+            document.getElementById('user-info').style.display = 'none';
+        }
+
+        function hideAuthSection() {
+            document.getElementById('auth-section').style.display = 'none';
+        }
+
+        function showUserInfo(user) {
+            hideAuthSection();
+            document.getElementById('user-info').style.display = 'block';
+            document.getElementById('user-details').innerHTML = `
+                <strong>Usuário:</strong> ${user.username || 'N/A'}<br>
+                <strong>Email:</strong> ${user.email || 'N/A'}<br>
+                <strong>ID:</strong> ${user.uuid || 'N/A'}
+            `;
+        }
+
+        function showGeneratorSection() {
+            document.getElementById('generator-section').style.display = 'block';
+        }
+
+        function hideGeneratorSection() {
+            document.getElementById('generator-section').style.display = 'none';
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+            
+            setTimeout(() => {
+                status.style.display = 'none';
+            }, 5000);
+        }
+
+        function showTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => tab.classList.remove('active'));
+            
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function generateImage() {
+            const btn = document.getElementById('generate-btn');
+            const prompt = document.getElementById('prompt-input').value;
+            const model = document.getElementById('model-select').value;
+            
+            if (!prompt.trim()) {
+                showStatus('Por favor, digite um prompt', 'warning');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Gerando...';
+            
+            try {
+                showStatus('Gerando imagem... Isso pode levar alguns segundos', 'info');
+                
+                // Usar txt2img do Puter.js
+                const result = await puter.ai.txt2img(prompt, {
+                    model: model,
+                    width: 1920,
+                    height: 1080
+                });
+
+                const resultDiv = document.getElementById('image-result');
+                resultDiv.innerHTML = `
+                    <h4>✅ Imagem Gerada!</h4>
+                    <img src="${result}" alt="Generated Image" style="max-width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <br><br>
+                    <a href="${result}" download="satsman_thumbnail.png" class="button">
+                        💾 Baixar Imagem
+                    </a>
+                `;
+                
+                showStatus('Imagem gerada com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao gerar imagem:', error);
+                showStatus('Erro ao gerar imagem: ' + error.message, 'error');
+                
+                // Tentar com chat() como fallback
+                try {
+                    showStatus('Tentando método alternativo...', 'info');
+                    
+                    const response = await puter.ai.chat(
+                        `Generate an image based on this prompt: ${prompt}`,
+                        { model: 'gpt-4-vision-preview' }
+                    );
+                    
+                    const resultDiv = document.getElementById('image-result');
+                    resultDiv.innerHTML = `
+                        <h4>📝 Resposta do Modelo:</h4>
+                        <div class="prompt-text">${response}</div>
+                        <p style="margin-top: 15px; color: #666;">Use este prompt em uma ferramenta de geração de imagens como DALL-E 3 ou Midjourney.</p>
+                    `;
+                    
+                } catch (fallbackError) {
+                    console.error('Erro no fallback:', fallbackError);
+                    showStatus('Todos os métodos falharam. Tente novamente mais tarde.', 'error');
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🎨 Gerar Imagem';
+            }
+        }
+
+        async function optimizePrompt() {
+            const btn = document.getElementById('optimize-btn');
+            const prompt = document.getElementById('optimize-input').value;
+            
+            if (!prompt.trim()) {
+                showStatus('Por favor, digite um prompt para otimizar', 'warning');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Otimizando...';
+            
+            try {
+                showStatus('Otimizando prompt com IA...', 'info');
+                
+                const response = await puter.ai.chat(
+                    `Optimize this prompt for better image generation results. Make it more detailed and specific for creating a professional YouTube thumbnail about Bitcoin and crypto: "${prompt}"`,
+                    { model: 'gpt-4' }
+                );
+
+                document.getElementById('optimized-prompt').textContent = response;
+                document.getElementById('optimized-prompt').style.display = 'block';
+                document.getElementById('copy-optimized-btn').style.display = 'inline-block';
+                
+                showStatus('Prompt otimizado com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao otimizar prompt:', error);
+                showStatus('Erro ao otimizar prompt: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '✨ Otimizar Prompt';
+            }
+        }
+
+        function copyOptimizedPrompt() {
+            const prompt = document.getElementById('optimized-prompt').textContent;
+            
+            navigator.clipboard.writeText(prompt).then(() => {
+                showStatus('Prompt copiado com sucesso!', 'success');
+            }).catch(() => {
+                showStatus('Erro ao copiar prompt', 'error');
+            });
+        }
+
+        async function listModels() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span>Carregando...';
+            
+            try {
+                showStatus('Carregando lista de modelos...', 'info');
+                
+                const models = await puter.ai.listModels();
+                
+                const modelsDiv = document.getElementById('models-list');
+                modelsDiv.innerHTML = `
+                    <h4>📋 Modelos Disponíveis:</h4>
+                    <div class="prompt-text">${JSON.stringify(models, null, 2)}</div>
+                `;
+                
+                showStatus('Modelos carregados com sucesso!', 'success');
+                
+            } catch (error) {
+                console.error('Erro ao carregar modelos:', error);
+                showStatus('Erro ao carregar modelos: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔄 Carregar Modelos';
+            }
+        }
+    </script>
+</body>
+</html>

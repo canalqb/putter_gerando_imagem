@@ -3,6 +3,7 @@
 *.key
 *_deploy_key
 *_deploy_key.pub
+SECRETS_TO_ADD.md
 
 # Arquivos de teste
 test_*.py
@@ -13,6 +14,7 @@ test_*.json
 *.jpg
 *.jpeg
 generated_images/
+resultados.html
 
 # Python
 __pycache__/

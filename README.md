@@ -175,7 +175,7 @@ Todos os dados sensíveis são carregados via:
 
 ### Como Criar Conta no Puter
 
-1. Acesse: https://puter.com/
+1. Acesse: https://puter.com/dashboard#account
 2. Clique em **"Sign Up"** ou **"Create Account"**
 3. Preencha com seu email e senha
 4. Confirme seu email
@@ -183,7 +183,7 @@ Todos os dados sensíveis são carregados via:
 
 ### Como Obter Token de Autenticação
 
-1. Faça login em https://puter.com/
+1. Faça login em https://puter.com/dashboard#account
 2. Acesse as configurações da sua conta
 3. Vá em **"API Keys"** ou **"Developer Settings"**
 4. Clique em **"Generate New Key"**
@@ -193,7 +193,7 @@ Todos os dados sensíveis são carregados via:
 
 ### Documentação Oficial
 
-- **Site:** https://puter.com/
+- **Site:** https://puter.com/dashboard#account
 - **Documentação:** https://developer.puter.com/
 - **Tutoriais:** https://developer.puter.com/tutorials/
 

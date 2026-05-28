@@ -1,0 +1,63 @@
+# Configuração do Sistema de Geração de Imagens
+# CanalQb Image Generator
+
+# Configurações do Servidor Webhook
+server:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
+
+# Configurações de Geração de Imagens
+generation:
+  default_width: 1920
+  default_height: 1080
+  default_aspect_ratio: "16:9"
+  timeout: 120
+  max_retries: 3
+  
+  # APIs disponíveis
+  apis:
+    pollinations:
+      enabled: true
+      url: "https://image.pollinations.ai/prompt"
+      model: "flux"
+      priority: 1
+    
+    huggingface:
+      enabled: false
+      url: "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2-1"
+      priority: 2
+
+# Configurações de Segurança
+security:
+  # Chave de API para webhook (deve ser definida via variável de ambiente)
+  webhook_secret: "${WEBHOOK_SECRET}"
+  
+  # Rate limiting
+  rate_limit:
+    enabled: true
+    requests_per_minute: 10
+    requests_per_hour: 100
+  
+  # IP whitelist (opcional)
+  ip_whitelist: []
+
+# Configurações de Armazenamento
+storage:
+  output_dir: "generated_images"
+  keep_original: true
+  max_age_days: 7
+
+# Configurações de Puter.js
+puter:
+  enabled: false
+  auth_required: true
+  signup_url: "https://puter.com/"
+  docs_url: "https://developer.puter.com/"
+
+# Configurações de Logging
+logging:
+  level: "INFO"
+  file: "app.log"
+  max_size: "10MB"
+  backup_count: 5

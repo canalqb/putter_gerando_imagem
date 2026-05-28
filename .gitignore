@@ -1,0 +1,41 @@
+# Chaves SSH e arquivos sensíveis
+*.pem
+*.key
+*_deploy_key
+*_deploy_key.pub
+
+# Arquivos de teste
+test_*.py
+test_*.json
+
+# Imagens geradas
+*.png
+*.jpg
+*.jpeg
+generated_images/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Configurações locais
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
